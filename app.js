@@ -8,7 +8,7 @@ class Book {
 
 class UI {
 	static display() {
-		const StoredBooks = [
+		/* const StoredBooks = [
 			{
 				title: 'Book One',
 				author: 'John Doe',
@@ -19,7 +19,9 @@ class UI {
 				author: 'Jane Doe',
 				isbn: '2222222222',
 			},
-		]
+		] */
+
+		const StoredBooks = JSON.parse(localStorage.getItem('books'))
 
 		const books = StoredBooks
 
@@ -66,6 +68,32 @@ class UI {
 		// Remove the alert after 3 seconds
 		setTimeout(() => alertElement.remove(), 3000)
 	}
+
+	static clearFields() {
+		document.querySelector('#title').value = ''
+		document.querySelector('#author').value = ''
+		document.querySelector('#isbn').value = ''
+	}
+}
+
+class Store {
+	static getBooks() {
+		let books
+
+		if (localStorage.getItem('books') === null) {
+			books = []
+		} else {
+			books = JSON.parse(localStorage.getItem('books'))
+		}
+
+		return books
+	}
+
+	static addBook(book) {
+		const books = Store.getBooks()
+		books.push(book)
+		localStorage.setItem('books', JSON.stringify(books))
+	}
 }
 
 // Event: Display books
@@ -85,4 +113,7 @@ document.querySelector('#book-form').addEventListener('submit', e => {
 
 	const book = new Book(title, author, isbn)
 	UI.addBookToList(book)
+
+	Store.addBook(book)
+	UI.clearFields()
 })
