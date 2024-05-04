@@ -8,19 +8,6 @@ class Book {
 
 class UI {
 	static display() {
-		/* const StoredBooks = [
-			{
-				title: 'Book One',
-				author: 'John Doe',
-				isbn: '1111111111',
-			},
-			{
-				title: 'Book Two',
-				author: 'Jane Doe',
-				isbn: '2222222222',
-			},
-		] */
-
 		const StoredBooks = JSON.parse(localStorage.getItem('books'))
 
 		const books = StoredBooks
@@ -41,7 +28,7 @@ class UI {
 
 		row.innerHTML += `<td>
 		<a href="#" class="block w-8 h-8 hover:bg-red-400 p-2 rounded-full transition">
-			<img src="./images/trash-solid.svg" alt="delete" class="w-full h-full" />
+			<img src="./images/trash-solid.svg" alt="delete" class="w-full h-full delete" />
 		</a>
 		</td>`
 
@@ -69,6 +56,10 @@ class UI {
 		setTimeout(() => alertElement.remove(), 3000)
 	}
 
+	static deleteBook(el) {
+		el.parentElement.parentElement.parentElement.remove()
+	}
+
 	static clearFields() {
 		document.querySelector('#title').value = ''
 		document.querySelector('#author').value = ''
@@ -94,6 +85,18 @@ class Store {
 		books.push(book)
 		localStorage.setItem('books', JSON.stringify(books))
 	}
+
+	static removeBook(isbn) {
+		const books = Store.getBooks()
+
+		books.forEach((book, index) => {
+			if (book.isbn === isbn) {
+				books.splice(index, 1)
+			}
+		})
+
+		localStorage.setItem('books', JSON.stringify(books))
+	}
 }
 
 // Event: Display books
@@ -116,4 +119,14 @@ document.querySelector('#book-form').addEventListener('submit', e => {
 
 	Store.addBook(book)
 	UI.clearFields()
+})
+
+// Event: Remove a book
+document.querySelector('#book-list').addEventListener('click', e => {
+	if (e.target.classList.contains('delete')) {
+		UI.deleteBook(e.target)
+		Store.removeBook(
+			e.target.parentElement.parentElement.previousElementSibling.textContent
+		)
+	}
 })
