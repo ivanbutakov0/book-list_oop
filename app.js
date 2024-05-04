@@ -35,10 +35,10 @@ class UI {
 		list.appendChild(row)
 	}
 
-	static showAlert(message) {
+	static showAlert(message, color) {
 		// Create the alert element
 		const alertElement = document.createElement('div')
-		alertElement.classList.add('text-center', 'text-red-500') // Add a class for styling (optional)
+		alertElement.classList.add('text-center', `text-${color}-500`) // Add a class for styling (optional)
 		alertElement.textContent = message
 
 		// Get the form element
@@ -111,7 +111,7 @@ document.querySelector('#book-form').addEventListener('submit', e => {
 	const isbn = document.querySelector('#isbn').value
 
 	if (title === '' || author === '' || isbn === '') {
-		return UI.showAlert('Please fill in all fields', 'danger')
+		return UI.showAlert('Please fill in all fields', 'red')
 	}
 
 	const book = new Book(title, author, isbn)
@@ -119,6 +119,7 @@ document.querySelector('#book-form').addEventListener('submit', e => {
 
 	Store.addBook(book)
 	UI.clearFields()
+	UI.showAlert('Book added', 'green')
 })
 
 // Event: Remove a book
@@ -128,5 +129,6 @@ document.querySelector('#book-list').addEventListener('click', e => {
 		Store.removeBook(
 			e.target.parentElement.parentElement.previousElementSibling.textContent
 		)
+		UI.showAlert('Book removed', 'green')
 	}
 })
